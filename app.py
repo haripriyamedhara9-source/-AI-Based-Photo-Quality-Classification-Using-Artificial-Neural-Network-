@@ -1,7 +1,7 @@
 import streamlit as st
 import numpy as np
 from PIL import Image
-import pickle
+from tensorflow.keras.models import load_model
 
 # Load ML model
 with open("photo_quality_ml.pkl", "rb") as file:
