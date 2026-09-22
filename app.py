@@ -3,9 +3,7 @@ import numpy as np
 from PIL import Image
 from tensorflow.keras.models import load_model
 
-# Load ML model
-with open("photo_quality_ml.pkl", "rb") as file:
-    model = pickle.load(file)
+model = load_model("photo_quality_ann.h5")
 
 st.title("AI-Based Photo Quality Classification")
 
@@ -17,17 +15,17 @@ uploaded_file = st.file_uploader(
 if uploaded_file is not None:
 
     img = Image.open(uploaded_file).convert("RGB")
+
     st.image(img, caption="Uploaded Image", use_container_width=True)
 
-    # Preprocess image
     img = img.resize((64, 64))
-    img_array = np.array(img).flatten() / 255.0
-    img_array = img_array.reshape(1, -1)
 
-    # Prediction
-    prediction = model.predict(img_array)[0]
+    img_array = np.array(img) / 255.0
+    img_array = img_array.reshape(1, 64, 64, 3)
 
-    if prediction == 1:
+    prediction = model.predict(img_array)
+
+    if prediction[0][0] >= 0.5:
         st.success("Photo Quality: High Quality")
     else:
         st.warning("Photo Quality: Low Quality")
